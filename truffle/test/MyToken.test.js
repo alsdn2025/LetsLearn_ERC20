@@ -13,7 +13,7 @@ const expect = chai.expect;
 contract("Token Test", async (accounts) => {
     const [ initialHolder, recipient, anotherAccount ] = accounts;
 
-    it("All tokens should be in Owner's account", async () => {
+    it("All tokens should be in initialHolder's account", async () => {
         let instance = await Token.deployed();
         let totalSupply = await instance.totalSupply();
 
