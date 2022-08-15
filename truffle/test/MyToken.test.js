@@ -10,11 +10,17 @@ chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
+require("dotenv").config({path: "../.env"});
+
 contract("Token Test", async (accounts) => {
     const [ initialHolder, recipient, anotherAccount ] = accounts;
 
+    beforeEach(async()=>{
+        this.myToken = await Token.new(process.env.INITIAL_TOKENS);
+    })
+
     it("All tokens should be in initialHolder's account", async () => {
-        let instance = await Token.deployed();
+        let instance = this.myToken;
         let totalSupply = await instance.totalSupply();
 
         // let balance = await instance.balanceOf(accounts[0]);
@@ -25,7 +31,7 @@ contract("Token Test", async (accounts) => {
 
     it("Is possible to send tokens between accounts", async()=>{
         const sendTokens = 1;
-        let instance = await Token.deployed();
+        let instance = this.myToken;
         let totalSupply = await instance.totalSupply();
         
         await expect(instance.balanceOf(initialHolder)).to.eventually.be.a.bignumber.equal(totalSupply);
