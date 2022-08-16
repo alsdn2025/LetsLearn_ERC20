@@ -1,5 +1,6 @@
 const TokenSale = artifacts.require("MyTokenSale");
 const Token = artifacts.require("MyToken");
+const KycContract = artifacts.require("KycContract");
 
 const chai = require("./setupchai.js");
 const BN = web3.utils.BN;
@@ -13,7 +14,7 @@ contract("TokenSale Test", async (accounts) => {
 
     it("should not have any tokens in my deployer account", async() => {
         let instance = await Token.deployed();
-        
+
         // clean room testing 
         return expect(instance.balanceOf(deployerAccount)).to.eventually.be.a.bignumber.equal(new BN(0));
     });
@@ -29,6 +30,11 @@ contract("TokenSale Test", async (accounts) => {
         let tokenInstance = await Token.deployed();
         let tokenSaleInstance = await TokenSale.deployed();
         let balanceBefore = await tokenInstance.balanceOf(recipient);
+        await expect(tokenSaleInstance.sendTransaction({from: recipient, value: web3.utils.toWei("1", "wei")})).to.be.rejected;
+        await expect(balanceBefore).to.be.bignumber.equal(await tokenInstance.balanceOf(recipient));
+
+        let KycContractInstance = await KycContract.deployed();
+        await KycContractInstance.setKycCompleted(recipient);
 
         await expect(tokenSaleInstance.sendTransaction({from: recipient, value: web3.utils.toWei("1", "wei")})).to.be.fulfilled;
         return expect(await tokenInstance.balanceOf(recipient)).to.be.a.bignumber.equal(balanceBefore.add(new BN(1)));
