@@ -4,7 +4,7 @@
   "description": "Truffle project with SimpleStorage contract",
   "main": "truffle-config.js",
   "dependencies": {
-    "@truffle/hdwallet-provider": "^2.0.10",
+    "@truffle/hdwallet-provider": "^2.0.14",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "chai-bn": "^0.3.1"

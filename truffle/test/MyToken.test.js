@@ -17,9 +17,6 @@ contract("Token Test", async (accounts) => {
         let instance = this.myToken;
         let totalSupply = await instance.totalSupply();
 
-        // let balance = await instance.balanceOf(accounts[0]);
-        // asset.equal(balance.valueOf(), initialSupply.valueOf(), "The balance was not the same");
-
         return expect(instance.balanceOf(initialHolder)).to.eventually.be.a.bignumber.equal(totalSupply); 
     });
 
