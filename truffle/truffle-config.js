@@ -18,11 +18,13 @@
  *
  */
 
-// require('dotenv').config();
-// const mnemonic = process.env["MNEMONIC"];
+
 // const infuraProjectId = process.env["INFURA_PROJECT_ID"];
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config();
+const mnemonic = process.env["MNEMONIC"];
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const metaMaskAccountIndex = 0;
 
 module.exports = {
   /**
@@ -48,6 +50,14 @@ module.exports = {
       port: 9545,            // Standard Ethereum port (default: none)
       network_id: 5777,       // Any network (default: none)
     },
+    metamask_account: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "http://127.0.0.1:9545", metaMaskAccountIndex);
+      },
+      network_id: 5777,
+      chain_id: 1337,
+    }
+
     //
     // An additional network, but with some advanced options…
     // advanced: {

@@ -6,7 +6,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { loaded: false, kycAddress: "0x123.."};
+  state = {loaded: false, kycAddress: "0x123..", tokenSaleAddress: null, userTokenBalance: 0};
 
   componentDidMount = async () => {
     try {
@@ -20,10 +20,11 @@ class App extends Component {
       this.networkId = await this.web3.eth.net.getId();      
     //   this.chainId = await this.web3.eth.getChainId();
 
-      this.myToken = new this.web3.eth.Contract(
+      this.myToken = await new this.web3.eth.Contract(
         Token.abi,
         Token.networks[this.networkId] && Token.networks[this.networkId].address
       );
+      this.tokenSymbol = await this.myToken.methods.symbol().call();
 
       this.tokenSale = new this.web3.eth.Contract(
         TokenSale.abi,
@@ -34,12 +35,9 @@ class App extends Component {
         KycContract.abi,
         KycContract.networks[this.networkId] && KycContract.networks[this.networkId].address
       );
-      console.log(this.kycContract);
-    //   alert("chainId : " + this.chainId);
-    //   alert(KycContract.networks[this.chainId] && KycContract.networks[this.chainId].address);
-    //   this.kycContract.options.address = "0x4C9Cab02E4e5ba8c95151322fd78a029E59B623b";
       
-      this.setState({loaded:true});
+      this.listenToTokenTransfer();
+      this.setState({loaded:true, tokenSaleAddress: TokenSale.networks[this.networkId].address}, this.updateUserTokens);
 
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -50,17 +48,36 @@ class App extends Component {
     }
   };
   
+  updateUserTokens = async () => {
+    let Balance = await this.myToken.methods.balanceOf(this.accounts[0]).call();
+    this.setState({userTokenBalance: Balance});
+  }
+
+  listenToTokenTransfer = async() => {
+    console.log("listen to token transfer");
+    this.myToken.events.Transfer({to: this.accounts[0]}).on("data", this.updateUserTokens);
+  }
+
+  handleBuyTokens = async() => {
+    await this.tokenSale.methods.buyTokens(this.accounts[0]).send({from: this.accounts[0], value:this.web3.utils.toWei("1", "wei")});
+  }
+
   render() {
     if (!this.state.loaded) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <div className="App">
-        <h1>Token Sale Example!</h1>
+      <div id="App">
+        <h1>{this.tokenSymbol} Token Sale Example!</h1>
         <p>Get myToken today!</p>
         <h2>KYC Whitelisting</h2>
         Address to allow : <input type="text" name="kycAddress" value={this.state.kycAddress} onChange={this.handleInputChange}/>
         <button type="button" onClick={this.handleKycWhitelisting}>Add to Whitelist</button>
+        <br/><br/>
+        <h2>How To buy</h2>
+        <p>If you want to buy tokens, send Wei to this address: {this.state.tokenSaleAddress}</p>
+        <p>Your Balance : {this.state.userTokenBalance} {this.tokenSymbol}</p>
+        <button type="button" onClick={this.handleBuyTokens}>Buy more Token</button>
       </div>
     );
   }
@@ -78,6 +95,5 @@ class App extends Component {
       [name]: value
     });
   };
-
 }
 export default App;
