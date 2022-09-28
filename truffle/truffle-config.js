@@ -47,16 +47,23 @@ module.exports = {
     //
     development: {
       host: "127.0.0.1",     // Localhost (default: none)
-      port: 9545,            // Standard Ethereum port (default: none)
-      network_id: 5777,       // Any network (default: none)
+      port: 9545,            
+      network_id: 5777       
     },
     metamask_account: {
       provider: function() {
         return new HDWalletProvider(mnemonic, "http://127.0.0.1:9545", metaMaskAccountIndex);
       },
       network_id: 5777,
-      chain_id: 1337,
-    }
+      chain_id: 1337
+    },
+    ropsten_infura: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/f6e4de0bff0c460f80308a4929f4294b", metaMaskAccountIndex)
+      },
+      network_id: 3,
+      chain_id: 3
+    },
 
     //
     // An additional network, but with some advanced options…

@@ -68,8 +68,10 @@ class App extends Component {
     }
     return (
       <div id="App">
-        <h1>{this.tokenSymbol} Token Sale Example!</h1>
-        <p>Get myToken today!</p>
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <h1>{this.tokenSymbol} Token Sale!</h1>
+        <p>-MinWoo Metal Warrior-</p>
+        <p>Token Address : {Token.networks[this.networkId].address}</p>
         <h2>KYC Whitelisting</h2>
         Address to allow : <input type="text" name="kycAddress" value={this.state.kycAddress} onChange={this.handleInputChange}/>
         <button type="button" onClick={this.handleKycWhitelisting}>Add to Whitelist</button>
